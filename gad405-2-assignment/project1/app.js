@@ -26,7 +26,7 @@ const mainState = {
     game.stage.disableVisibilityChange = true;
 
     this.bird = game.add.sprite(80, 240, 'bird');
-    this.bird.anchor.set(-1);
+    this.bird.anchor.set(0.5, 0.5);
     this.birdSpeed = 250;
     this.birdFlapPower = 500;
     this.birdJustCrossedPipes = false;
@@ -34,6 +34,7 @@ const mainState = {
     this.bird.body.gravity.y = 800;
     this.bird.body.collideWorldBounds = true;
     this.bird.body.bounce.setTo(0.3, 0.3);
+    this.bird.body.setSize(50, 50, 5, 5);
 
     this.cursors = game.input.keyboard.createCursorKeys();
     jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -52,7 +53,7 @@ const mainState = {
 
     //game.SPACEBAR.onDown.add(this.flap, this);
     game.time.events.loop(1000, this.addFloor, this);
-    game.time.events.loop(3000, this.addPipe, this);
+    game.time.events.loop(2400, this.addPipe, this);
 
     sprite1 = game.add.sprite(0, 420, 'floor');
     sprite1.name = 'floor';
@@ -72,7 +73,7 @@ const mainState = {
   },
 
   flap: function () {
-    if (this.bird.y > 320){
+    if (this.bird.y > 380){
       this.flapSound.play();
       this.bird.body.velocity.y = -this.birdFlapPower;
       this.bird.body.velocity.x = this.birdFlapPower/2;
@@ -83,7 +84,7 @@ const mainState = {
     game.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = true;
-    game.load.image('bird', 'assets/bird.png');
+    game.load.image('bird', 'assets/bird1.png');
     game.load.image('pipe', 'assets/pipe1.png');
     game.load.audio('flap', 'assets/jump.mp3');
     game.load.image('floor', 'assets/floor1.png');
@@ -97,6 +98,14 @@ const mainState = {
     if (this.bird.y > game.height) {
       this.die();
     }
+
+    game.camera.shake(0.005, 500);
+
+    if (this.bird.y < 380){
+      game.camera.shake(0.00, 0);
+    }
+
+    this.bird.angle += 2;
 
     game.physics.arcade.collide(sprite1, this.bird);
     game.physics.arcade.collide(sprite2, this.bird);
