@@ -1,4 +1,12 @@
 const mainState = {
+
+  addFloor: function () {
+    const floorSpawn = this.ground.create(400, 420, 'floor');
+    game.physics.enable(floorSpawn, Phaser.Physics.ARCADE);
+    floorSpawn.body.immovable = true;
+    floorSpawn.body.velocity.x = -this.birdSpeed;
+  },
+
   addPipe: function () {
     const pipeHolePosition = game.rnd.between(70 , 330 - this.pipeHole);
 
@@ -10,13 +18,6 @@ const mainState = {
     });
 
     this.birdJustCrossedPipes = false;
-  },
-
-  addFloor: function () {
-    const floorSpawn = game.add.sprite(400, 420, 'floor');
-    game.physics.enable(floorSpawn, Phaser.Physics.ARCADE);
-    //floor.body.immovable = true;
-    floorSpawn.body.velocity.x = -this.birdSpeed;
   },
 
   create: function () {
@@ -32,6 +33,7 @@ const mainState = {
     game.physics.arcade.enable(this.bird);
     this.bird.body.gravity.y = 800;
     this.bird.body.collideWorldBounds = true;
+    this.bird.body.bounce.setTo(0.3, 0.3);
 
     this.cursors = game.input.keyboard.createCursorKeys();
     jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -39,24 +41,30 @@ const mainState = {
 
     this.flapSound = game.add.audio('flap');
 
-    this.ground = this.floorSpawn
-
     this.pipes = game.add.group();
     this.pipeHole = 200;
     this.addPipe();
+
+    this.ground = game.add.group();
 
     this.score = 0;
     this.scoreText = game.add.text(230, 20, '0', { font: '30px Arial', fill: '#ffffff' });
 
     //game.SPACEBAR.onDown.add(this.flap, this);
-    game.time.events.loop(2000, this.addPipe, this);
-    game.time.events.loop(2000, this.addFloor, this);
+    game.time.events.loop(1000, this.addFloor, this);
+    game.time.events.loop(3000, this.addPipe, this);
 
     sprite1 = game.add.sprite(0, 420, 'floor');
     sprite1.name = 'floor';
     game.physics.enable(sprite1, Phaser.Physics.ARCADE);
     sprite1.body.immovable = true;
     sprite1.body.velocity.x = -this.birdSpeed;
+
+    sprite2 = game.add.sprite(300, 420, 'floor');
+    sprite2.name = 'floor';
+    game.physics.enable(sprite2, Phaser.Physics.ARCADE);
+    sprite2.body.immovable = true;
+    sprite2.body.velocity.x = -this.birdSpeed;
   },
 
   die: function () {
@@ -64,9 +72,10 @@ const mainState = {
   },
 
   flap: function () {
-    if (this.bird.y > 350){
+    if (this.bird.y > 320){
       this.flapSound.play();
       this.bird.body.velocity.y = -this.birdFlapPower;
+      this.bird.body.velocity.x = this.birdFlapPower/2;
     }
   },
 
@@ -90,10 +99,22 @@ const mainState = {
     }
 
     game.physics.arcade.collide(sprite1, this.bird);
+    game.physics.arcade.collide(sprite2, this.bird);
     game.physics.arcade.collide(this.ground, this.bird);
 
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
         this.flap();
+    }
+
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
+      this.bird.body.velocity.x = this.birdFlapPower/3;
+    }
+    else{
+      this.bird.body.velocity.x = -this.birdFlapPower/3;
+    }
+
+    if (this.bird.y > 350){
+      this.bird.body.velocity.x = 0;
     }
 
     this.pipes.forEach((pipe) => {
