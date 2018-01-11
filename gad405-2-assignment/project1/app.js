@@ -42,6 +42,9 @@ const mainState = {
 
     this.flapSound = game.add.audio('flap');
     this.rollingSound = game.add.audio('rolling');
+    this.rollingSound.allowMultiple = false;
+    this.screamSound = game.add.audio('scream');
+    this.screamSound.volume -= 0.95;
 
     this.pipes = game.add.group();
     this.pipeHole = 200;
@@ -76,6 +79,7 @@ const mainState = {
   flap: function () {
     if (this.bird.y > 380){
       this.flapSound.play();
+      //this.screamSound.play();
       this.bird.body.velocity.y = -this.birdFlapPower;
       this.bird.body.velocity.x = this.birdFlapPower/2;
     }
@@ -91,6 +95,8 @@ const mainState = {
     game.load.image('floor', 'assets/floor1.png');
     game.load.image('background', 'assets/background1.png');
     game.load.audio('rolling', 'assets/rolling.mp3');
+    game.load.audio('landing', 'assets/Landing.mp3');
+    game.load.audio('scream', 'assets/scream.mp3');
   },
 
   update: function () {
@@ -103,11 +109,15 @@ const mainState = {
 
     game.camera.shake(0.005, 500);
 
+    //this.rollingSound.play();
+
     if (this.bird.y < 380){
       game.camera.shake(0.00, 0);
+      this.rollingSound.pause();
     }
 
     this.bird.angle += 2;
+
 
     game.physics.arcade.collide(sprite1, this.bird);
     game.physics.arcade.collide(sprite2, this.bird);
@@ -126,7 +136,6 @@ const mainState = {
 
     if (this.bird.y > 350){
       this.bird.body.velocity.x = -1;
-      //game.time.events.loop(2400, this.rollingSound.play());
     }
 
     this.pipes.forEach((pipe) => {
