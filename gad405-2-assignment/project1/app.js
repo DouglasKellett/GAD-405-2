@@ -41,6 +41,7 @@ const mainState = {
 
 
     this.flapSound = game.add.audio('flap');
+    this.rollingSound = game.add.audio('rolling');
 
     this.pipes = game.add.group();
     this.pipeHole = 200;
@@ -89,6 +90,7 @@ const mainState = {
     game.load.audio('flap', 'assets/jump.mp3');
     game.load.image('floor', 'assets/floor1.png');
     game.load.image('background', 'assets/background1.png');
+    game.load.audio('rolling', 'assets/rolling.mp3');
   },
 
   update: function () {
@@ -123,7 +125,8 @@ const mainState = {
     }
 
     if (this.bird.y > 350){
-      this.bird.body.velocity.x = 0;
+      this.bird.body.velocity.x = -1;
+      //game.time.events.loop(2400, this.rollingSound.play());
     }
 
     this.pipes.forEach((pipe) => {
