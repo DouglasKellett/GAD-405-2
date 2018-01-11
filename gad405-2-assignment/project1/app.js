@@ -45,6 +45,8 @@ const mainState = {
     this.rollingSound.allowMultiple = false;
     this.screamSound = game.add.audio('scream');
     this.screamSound.volume -= 0.95;
+    this.landingSound = game.add.audio('landing');
+    this.landingSound.allowMultiple = false;
 
     this.pipes = game.add.group();
     this.pipeHole = 200;
@@ -109,11 +111,17 @@ const mainState = {
 
     game.camera.shake(0.005, 500);
 
-    //this.rollingSound.play();
+    if (this.bird.y > 380){
+      this.landingSound.play();
+      this.landingSound.mute = true;
+    }
+    else{
+      this.landingSound.mute = false;
+    }
+
 
     if (this.bird.y < 380){
       game.camera.shake(0.00, 0);
-      this.rollingSound.pause();
     }
 
     this.bird.angle += 2;
